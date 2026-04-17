@@ -1,4 +1,6 @@
-# Nanobanana API Reference
+# Nanobanana API Reference (Gemini Backend)
+
+For the OpenAI backend, see [openai-api-reference.md](openai-api-reference.md).
 
 ## Official Contract
 

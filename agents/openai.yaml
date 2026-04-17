@@ -1,7 +1,7 @@
 interface:
-  display_name: "Nanobanana Images"
-  short_description: "Generate research figures with explicit API setup"
-  default_prompt: "Use $nanobanana-image-generation for materials figures or exact plots; set NANOBANANA_API_KEY and NANOBANANA_BASE_URL first, and only allow third-party endpoints intentionally."
+  display_name: "Paper Figure Generator"
+  short_description: "Generate research figures with Gemini or OpenAI GPT-Image, plus exact matplotlib plots"
+  default_prompt: "Use $nanobanana-image-generation for CS paper figures, materials figures, or exact plots. Choose backend with --backend gemini|openai. Set NANOBANANA_API_KEY+NANOBANANA_BASE_URL for Gemini, or OPENAI_API_KEY for OpenAI."
 
 policy:
   allow_implicit_invocation: false

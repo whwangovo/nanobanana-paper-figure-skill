@@ -19,6 +19,22 @@ Backup copies of the old installed directories were preserved here:
 
 ## What Was Changed
 
+### OpenAI GPT-Image Backend (2026-04-17)
+
+Added OpenAI GPT-Image (`gpt-image-1.5`) as a second backend alongside Gemini. The script was refactored with a backend abstraction layer.
+
+Key changes:
+- `scripts/generate_image.py` refactored: Gemini-specific code extracted into `gemini_request()` / `gemini_parse_response()`, new `openai_request()` / `openai_parse_response()` added, unified `save_parts()` accepts backend-agnostic format
+- New `--backend gemini|openai` flag (default: gemini, env var: `PAPER_FIGURE_BACKEND`)
+- New OpenAI-specific flags: `--quality`, `--output-format`, `--background`
+- New `references/openai-api-reference.md` documenting the OpenAI Images API contract
+- `SKILL.md` updated with dual-backend docs, OpenAI env vars, and examples
+- `agents/openai.yaml` updated with new description
+
+OpenAI editing (`--input-image` with `--backend openai`) is not yet implemented. Use Gemini for editing.
+
+### CS Paper Figure Support (initial)
+
 The repo was created from the installed `.claude` copy of the skill and then turned into the live source by symlinking both installed locations back to this repo.
 
 The main functional change already present in this repo is that CS paper figure support is now wired into the executable `image` flow rather than existing only as documentation.
@@ -45,30 +61,44 @@ That means:
 
 ## Verified Commands
 
-These were run successfully in this repo before handoff:
+These were run successfully in this repo:
 
 ```bash
 python3 -m py_compile scripts/*.py
 node --check scripts/generate_image.js
+
+# Gemini backend (default, backward compatible)
 python3 scripts/build_cs_paper_figure_prompt.py \
   --cs-paper-figure method-overview \
   --venue neurips \
   --lang en \
   "Video frames are encoded, memory retrieves relevant history, and the decoder predicts temporally consistent masks."
+
 python3 scripts/generate_image.py \
   --print-prompt \
   --cs-paper-figure architecture \
   --venue cvpr \
   --lang en \
   "Image input goes through a backbone, multi-scale features are aligned with text, temporal memory stabilizes predictions, and the head outputs segmentation masks."
+
+# OpenAI backend (print-prompt only, no API call)
+python3 scripts/generate_image.py \
+  --print-prompt --backend openai \
+  --cs-paper-figure architecture \
+  --venue cvpr \
+  --lang en \
+  "ViT architecture with patch embedding, transformer encoder, and classification head."
 ```
 
 ## Working Rules
 
 - Use `image` mode for conceptual figures, method overviews, architectures, teasers, and schematics.
 - Use `plot` mode for exact quantitative figures.
+- Choose backend with `--backend gemini|openai`. Default is `gemini`.
 - `--venue` is only valid together with `--cs-paper-figure`.
 - Do not use both `--materials-figure` and `--cs-paper-figure` together.
+- `--quality`, `--output-format`, `--background` are OpenAI-only; ignored by Gemini backend.
+- `--input-image` editing is only supported with Gemini backend for now.
 
 ## Recommended Next Steps
 

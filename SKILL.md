@@ -1,7 +1,7 @@
 ---
 name: nanobanana-image-generation
-description: Use when the user wants to generate or edit images with Google's Nanobanana/Gemini image models using the official Gemini API shape, or when they need publication-style scientific figures rendered exactly from data with the bundled Python plotting tool. Prefer this skill for text-to-image, image-to-image editing, multi-image reference workflows, attachment-based recreations, exact bar/trend/heatmap/scatter plots, or when the user wants publication-style figures such as materials-science paper schematics. Use it when the user asks for a materials-science figure, journal-style scientific illustration, graphical abstract, mechanism diagram, device architecture, processing workflow, or paper-ready materials figure.
-metadata: {"openclaw":{"requires":{"anyBins":["python3","python"],"env":["NANOBANANA_API_KEY","NANOBANANA_BASE_URL"]},"primaryEnv":"NANOBANANA_API_KEY","homepage":"https://github.com/siyuliu/materials-science-figure-skill"}}
+description: Use when the user wants to generate or edit images with Gemini or OpenAI GPT-Image models, or when they need publication-style scientific figures rendered exactly from data with the bundled Python plotting tool. Prefer this skill for text-to-image, image-to-image editing, multi-image reference workflows, attachment-based recreations, exact bar/trend/heatmap/scatter plots, or when the user wants publication-style figures such as CS paper architecture diagrams, materials-science paper schematics, method overviews, pipeline figures, or teaser figures. Supports both Gemini and OpenAI backends via --backend flag.
+metadata: {"openclaw":{"requires":{"anyBins":["python3","python"],"env":["NANOBANANA_API_KEY","NANOBANANA_BASE_URL"]},"primaryEnv":"NANOBANANA_API_KEY","homepage":"https://github.com/siyuliu/materials-science-figure-skill","optionalEnv":["OPENAI_API_KEY"]}}
 disable-model-invocation: true
 ---
 
@@ -9,15 +9,26 @@ disable-model-invocation: true
 
 ## Overview
 
-This skill now supports two modes:
+This skill supports two modes:
 
 - `image` mode
-  Gemini or Nanobanana generation and editing through the official `generateContent` flow
+  Generate or edit images using either the Gemini or OpenAI GPT-Image backend.
+  Select the backend with `--backend gemini|openai` or the `PAPER_FIGURE_BACKEND` env var. Default: `gemini`.
 - `plot` mode
   Exact Python or matplotlib rendering of publication-style figures from numeric data
 
-Use `image` mode for mechanism figures, graphical abstracts, device schematics, style-matched redraws, and diagram-first work.
+Use `image` mode for mechanism figures, graphical abstracts, device schematics, style-matched redraws, CS paper architecture diagrams, and diagram-first work.
 Use `plot` mode for exact bar charts, trend curves, heatmaps, scatter plots, and multi-panel figures that must preserve numeric truth.
+
+### Backend Comparison
+
+| Feature | Gemini | OpenAI GPT-Image |
+|---|---|---|
+| Generation | Yes | Yes |
+| Editing (--input-image) | Yes | Not yet (planned) |
+| Text output alongside image | Yes | Only revised_prompt |
+| Quality control | imageSize | --quality low/medium/high |
+| Transparent background | No | --background transparent |
 
 Runtime policy:
 
@@ -49,11 +60,10 @@ For requests like "replace the English text in this attached image with Chinese"
 Preflight:
 
 - `plot` mode is local-only and does not require API credentials or outbound network access.
-- `image` mode sends prompt text, API credentials, and any `--input-image` files to the configured Gemini-compatible endpoint.
-- Prefer the official Google endpoint unless you intentionally trust another provider.
-- If you use a third-party endpoint, require `--allow-third-party` or `NANOBANANA_ALLOW_THIRD_PARTY=1` and treat that as an explicit trust decision.
+- `image` mode sends prompt text, API credentials, and any `--input-image` files to the configured endpoint.
+- Choose a backend with `--backend gemini|openai` or `PAPER_FIGURE_BACKEND`. Default: `gemini`.
 
-Set environment variables:
+### Gemini Backend
 
 ```bash
 export NANOBANANA_API_KEY="your-provider-key"
@@ -74,13 +84,35 @@ If you do not want the API key to appear in the command line, store it in a file
 export NANOBANANA_API_KEY_FILE="$PWD/.secrets/nanobanana_api_key"
 ```
 
-Generate an image:
+### OpenAI Backend
+
+```bash
+export OPENAI_API_KEY="your-openai-key"
+export OPENAI_IMAGE_MODEL="gpt-image-1.5"  # optional, this is the default
+```
+
+Optional custom endpoint:
+
+```bash
+export OPENAI_BASE_URL="https://your-proxy.example.com"
+```
+
+Generate an image (Gemini, default):
 
 ```bash
 python3 scripts/generate_image.py "Create a picture of a nano banana dish in a fancy restaurant with a Gemini theme"
 ```
 
-Generate a CS paper figure with a built-in shortcut:
+Generate a CS paper figure with OpenAI GPT-Image:
+
+```bash
+python3 scripts/generate_image.py --backend openai \
+  --cs-paper-figure architecture --venue cvpr --lang en \
+  --quality high --output-format png \
+  "ViT architecture with patch embedding, transformer encoder layers, and classification head."
+```
+
+Generate a CS paper figure with a built-in shortcut (Gemini):
 
 ```bash
 python3 scripts/generate_image.py "Video frames are encoded, a memory bank retrieves relevant history, the fusion block injects useful context, and the decoder produces temporally consistent predictions." \
@@ -393,17 +425,30 @@ python3 scripts/build_cs_paper_figure_prompt.py \
 
 ## Failure Handling
 
+### Gemini Backend
+
 - If the API returns `401` or `403`, verify `NANOBANANA_API_KEY`.
 - If the CLI says the base URL is missing, set `NANOBANANA_BASE_URL` or pass `--base-url`.
 - If the CLI refuses a non-official endpoint, add `--allow-third-party` or set `NANOBANANA_ALLOW_THIRD_PARTY=1` only if that provider is intentional.
 - If the API returns `404`, verify that the request is going to `/v1beta/models/{model}:generateContent`.
 - If the provider says the model does not exist, verify the exact model name in the official docs and the provider's supported model list.
 - If no image is returned, inspect `candidates[0].content.parts` and check whether the request asked for image output.
+
+### OpenAI Backend
+
+- If the API returns `401`, verify `OPENAI_API_KEY`.
+- If the API returns `429`, you have hit the rate limit. Wait and retry, or reduce `--quality` to `medium`.
+- If the API returns `400` with a content policy error, the prompt was rejected by OpenAI's moderation. Simplify the prompt or remove potentially flagged content.
+- If `--input-image` is used with `--backend openai`, the CLI will exit with an error. Use `--backend gemini` for editing workflows.
+
+### General
+
 - If the user supplied only a chat attachment and no file path, do not describe the result as an exact edit unless the platform actually exposed the attachment bytes.
 
 ## References
 
-- Read [references/api-reference.md](references/api-reference.md) for the official request shape.
+- Read [references/api-reference.md](references/api-reference.md) for the Gemini API request shape.
+- Read [references/openai-api-reference.md](references/openai-api-reference.md) for the OpenAI GPT-Image API request shape.
 - Read [references/prompt-templates.md](references/prompt-templates.md) for generation and editing prompt scaffolds.
 - Read [references/materials-science-figure-template.md](references/materials-science-figure-template.md) when generating materials-science paper figures.
 - Read [references/cs-paper-figure-workflow.md](references/cs-paper-figure-workflow.md) when generating CS paper figures.

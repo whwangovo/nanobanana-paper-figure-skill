@@ -1,6 +1,6 @@
 [English](README.md) | [中文](README_zh.md)
 
-# Nanobanana 论文绘图 Skill
+# 论文绘图 Skill (Paper Figure Skill)
 
 一个 Claude Code skill，用于生成投稿级 CS 论文图表，支持 Gemini 和 OpenAI GPT-Image 双后端。
 

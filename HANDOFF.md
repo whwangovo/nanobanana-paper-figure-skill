@@ -2,20 +2,20 @@
 
 ## Current State
 
-- Repo path: `/Users/kiren/work/project/nanobanana-paper-figure-skill`
+- Repo path: `/Users/kiren/work/project/paper-figure-skill`
 - Git status at handoff time: clean
 - Current HEAD: `637447b` `Initial skill snapshot`
 - This repo is now the single maintenance source for the skill
 
 Installed skill paths now point here via symlink:
 
-- `/Users/kiren/.claude/skills/nanobanana-image-generation`
-- `/Users/kiren/.agents/skills/nanobanana-image-generation`
+- `/Users/kiren/.claude/skills/paper-figure-skill`
+- `/Users/kiren/.agents/skills/paper-figure-skill`
 
 Backup copies of the old installed directories were preserved here:
 
-- `/Users/kiren/.claude/skills/nanobanana-image-generation.backup-20260417-163638`
-- `/Users/kiren/.agents/skills/nanobanana-image-generation.backup-20260417-163638`
+- `/Users/kiren/.claude/skills/nanobanana-image-generation.backup-20260417-163638` (old name)
+- `/Users/kiren/.agents/skills/nanobanana-image-generation.backup-20260417-163638` (old name)
 
 ## What Was Changed
 
@@ -103,14 +103,14 @@ python3 scripts/generate_image.py \
 ## Recommended Next Steps
 
 1. Add lightweight regression tests for prompt resolution.
-2. Decide whether this repo should keep the old skill name `nanobanana-image-generation` or be renamed more explicitly around paper figures.
+2. ~~Decide whether this repo should keep the old skill name `nanobanana-image-generation` or be renamed more explicitly around paper figures.~~ Done — renamed to `paper-figure-skill`.
 3. Add a remote if you want this maintained on GitHub.
 4. If you want repeatable installs elsewhere, add a small sync or install script later.
 
 ## Quick Start
 
 ```bash
-cd /Users/kiren/work/project/nanobanana-paper-figure-skill
+cd /Users/kiren/work/project/paper-figure-skill
 git status
 python3 scripts/generate_image.py --help
 ```

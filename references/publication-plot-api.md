@@ -5,7 +5,7 @@ Use this reference when the user needs exact plotting from data rather than prom
 The deterministic entrypoint is:
 
 ```bash
-python3 skills/nanobanana-image-generation/scripts/plot_publication_figure.py spec.json
+python3 skills/paper-figure-skill/scripts/plot_publication_figure.py spec.json
 ```
 
 It renders publication-style figures from a JSON spec and exports exact PNG, PDF, or SVG outputs.
@@ -237,7 +237,7 @@ output/plots/<spec-file-stem>.svg
 Override it with:
 
 ```bash
-python3 skills/nanobanana-image-generation/scripts/plot_publication_figure.py spec.json \
+python3 skills/paper-figure-skill/scripts/plot_publication_figure.py spec.json \
   --out-path output/plots/my_figure \
   --formats png pdf svg \
   --dpi 300
@@ -248,7 +248,7 @@ python3 skills/nanobanana-image-generation/scripts/plot_publication_figure.py sp
 For Codex-facing natural-language workflows, a lighter request JSON can be expanded into a full spec:
 
 ```bash
-python3 skills/nanobanana-image-generation/scripts/build_plot_spec.py request.json --out spec.json
+python3 skills/paper-figure-skill/scripts/build_plot_spec.py request.json --out spec.json
 ```
 
 This is mainly for Codex's internal use after interpreting a user's natural-language plotting request. See [natural-language-plot-workflow.md](natural-language-plot-workflow.md).

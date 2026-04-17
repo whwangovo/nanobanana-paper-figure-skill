@@ -61,8 +61,8 @@ For simple plots:
 2. Run:
 
 ```bash
-python3 skills/nanobanana-image-generation/scripts/build_plot_spec.py request.json --out spec.json
-python3 skills/nanobanana-image-generation/scripts/plot_publication_figure.py spec.json
+python3 skills/paper-figure-skill/scripts/build_plot_spec.py request.json --out spec.json
+python3 skills/paper-figure-skill/scripts/plot_publication_figure.py spec.json
 ```
 
 For more custom layouts:

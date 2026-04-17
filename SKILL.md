@@ -1,11 +1,11 @@
 ---
-name: nanobanana-image-generation
+name: paper-figure-skill
 description: Use when the user wants to generate or edit images with Gemini or OpenAI GPT-Image models, or when they need publication-style scientific figures rendered exactly from data with the bundled Python plotting tool. Prefer this skill for text-to-image, image-to-image editing, multi-image reference workflows, attachment-based recreations, exact bar/trend/heatmap/scatter plots, or when the user wants publication-style figures such as CS paper architecture diagrams, materials-science paper schematics, method overviews, pipeline figures, or teaser figures. Supports both Gemini and OpenAI backends via --backend flag.
 metadata: {"openclaw":{"requires":{"anyBins":["python3","python"],"env":["NANOBANANA_API_KEY","NANOBANANA_BASE_URL"]},"primaryEnv":"NANOBANANA_API_KEY","homepage":"https://github.com/siyuliu/materials-science-figure-skill","optionalEnv":["OPENAI_API_KEY"]}}
 disable-model-invocation: true
 ---
 
-# Nanobanana Image Generation
+# Paper Figure Skill
 
 ## Overview
 
@@ -181,7 +181,7 @@ For `plot` mode:
 6. Render with:
 
 ```bash
-python3 skills/nanobanana-image-generation/scripts/plot_publication_figure.py spec.json
+python3 skills/paper-figure-skill/scripts/plot_publication_figure.py spec.json
 ```
 
 7. Export exact PNG, PDF, or SVG outputs.
@@ -251,7 +251,7 @@ python3 skills/nanobanana-image-generation/scripts/plot_publication_figure.py ./
 Natural-language-friendly internal workflow:
 
 ```bash
-python3 skills/nanobanana-image-generation/scripts/build_plot_spec.py ./request.json --out ./spec.json
+python3 skills/paper-figure-skill/scripts/build_plot_spec.py ./request.json --out ./spec.json
 python3 skills/nanobanana-image-generation/scripts/plot_publication_figure.py ./spec.json
 ```
 

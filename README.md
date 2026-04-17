@@ -1,6 +1,6 @@
 [English](README.md) | [中文](README_zh.md)
 
-# Nanobanana Paper Figure Skill
+# Paper Figure Skill
 
 A Claude Code skill for generating publication-quality CS paper figures using Gemini or OpenAI GPT-Image APIs.
 

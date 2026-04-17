@@ -6,6 +6,7 @@ This snapshot includes:
 
 - Gemini-compatible `image` generation and editing helpers
 - exact `plot` rendering for publication figures
+- `vectorize` pipeline for converting AI-generated images to editable SVGs
 - materials-science prompt shortcuts
 - CS paper figure prompt shortcuts for venues such as `NeurIPS`, `ICML`, `ICLR`, `CVPR`, `ICCV`, `ECCV`, `ACL`, `EMNLP`, and `SIGGRAPH`
 
@@ -42,6 +43,12 @@ Render an exact plot:
 
 ```bash
 python3 scripts/plot_publication_figure.py spec.json
+```
+
+Convert an AI-generated image to editable SVG:
+
+```bash
+python3 scripts/vectorize_image.py gemini_output.png -o output/vectorize/
 ```
 
 ## Maintenance Notes

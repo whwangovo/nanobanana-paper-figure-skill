@@ -9,19 +9,22 @@ disable-model-invocation: true
 
 ## Overview
 
-This skill now supports two modes:
+This skill now supports three modes:
 
 - `image` mode
   Gemini or Nanobanana generation and editing through the official `generateContent` flow
 - `plot` mode
   Exact Python or matplotlib rendering of publication-style figures from numeric data
+- `vectorize` mode
+  Post-processing pipeline that converts AI-generated raster images into editable SVG vectors using open-source tools (dewatermark → upscale → background removal → vectorization)
 
 Use `image` mode for mechanism figures, graphical abstracts, device schematics, style-matched redraws, and diagram-first work.
 Use `plot` mode for exact bar charts, trend curves, heatmaps, scatter plots, and multi-panel figures that must preserve numeric truth.
+Use `vectorize` mode to convert AI-generated logos, icons, or schematics into editable SVG files for PPT assembly or further editing.
 
 Runtime policy:
 
-- Python is the required runtime for this skill and the canonical path for both `image` and `plot` workflows.
+- Python is the required runtime for this skill and the canonical path for `image`, `plot`, and `vectorize` workflows.
 - `scripts/generate_image.js` is an optional parity CLI for environments that already use Node.js, not the required runtime baseline for registry gating.
 
 When the user is working in Codex and describes a plot in natural language, do not require them to hand-write a JSON spec. Codex should translate the request into an internal plot request or spec and run the plotting scripts.
@@ -154,6 +157,19 @@ python3 skills/nanobanana-image-generation/scripts/plot_publication_figure.py sp
 
 7. Export exact PNG, PDF, or SVG outputs.
 
+For `vectorize` mode:
+
+1. Read [references/vectorize-workflow.md](references/vectorize-workflow.md) for prerequisites and best practices.
+2. Run the four-stage pipeline:
+
+```bash
+python3 scripts/vectorize_image.py input.png -o output/vectorize/
+```
+
+3. Skip steps that don't apply: `--skip dewatermark` for non-Gemini images, `--skip upscale` for already high-res images.
+4. For multi-element images, crop individual elements first: `--crop X,Y,W,H`.
+5. Add text and basic shapes in PPT after importing the SVG — do not vectorize text.
+
 ## Environment
 
 Required:
@@ -185,6 +201,8 @@ Optional:
   Python CLI for exact publication-style plotting from JSON specs.
 - `scripts/build_plot_spec.py`
   Python CLI that expands a concise request JSON into a full plotting spec.
+- `scripts/vectorize_image.py`
+  Python CLI that converts AI-generated raster images to editable SVG vectors via a four-stage pipeline (dewatermark → upscale → background removal → vectorization).
 
 Common options:
 - `--input-image ./source.png`
@@ -400,6 +418,9 @@ python3 scripts/build_cs_paper_figure_prompt.py \
 - If the provider says the model does not exist, verify the exact model name in the official docs and the provider's supported model list.
 - If no image is returned, inspect `candidates[0].content.parts` and check whether the request asked for image output.
 - If the user supplied only a chat attachment and no file path, do not describe the result as an exact edit unless the platform actually exposed the attachment bytes.
+- If `vectorize_image.py` reports a missing dependency, install the specific package shown in the error message. Do not install all vectorize dependencies unless the user needs the full pipeline.
+- If `realesrgan-ncnn-vulkan` fails on macOS with a security error, run `xattr -cr` on the binary.
+- If `rembg` is slow on first run, it is downloading the U2-Net model (~170MB). Subsequent runs use the cached model.
 
 ## References
 
@@ -411,3 +432,4 @@ python3 scripts/build_cs_paper_figure_prompt.py \
 - Read [references/publication-chart-patterns.md](references/publication-chart-patterns.md) for chart and multi-panel layout patterns.
 - Read [references/publication-plot-api.md](references/publication-plot-api.md) for exact plotting from numeric data.
 - Read [references/natural-language-plot-workflow.md](references/natural-language-plot-workflow.md) when the user describes an exact plot in natural language and Codex needs to translate it into an internal plotting request.
+- Read [references/vectorize-workflow.md](references/vectorize-workflow.md) when converting AI-generated raster images to editable SVG vectors.

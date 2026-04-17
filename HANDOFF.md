@@ -40,8 +40,10 @@ That means:
 - `scripts/build_materials_figure_prompt.py`: local materials-science prompt builder
 - `scripts/build_plot_spec.py`: concise plot request -> full plot spec
 - `scripts/plot_publication_figure.py`: exact plot renderer
+- `scripts/vectorize_image.py`: AI image → editable SVG pipeline (dewatermark → upscale → background removal → vectorization)
 - `references/cs-paper-figure-templates.json`: executable CS prompt templates
 - `references/cs-paper-figure-workflow.md`: CS paper figure guidance
+- `references/vectorize-workflow.md`: vectorize mode prerequisites, usage, and best practices
 
 ## Verified Commands
 
@@ -67,8 +69,10 @@ python3 scripts/generate_image.py \
 
 - Use `image` mode for conceptual figures, method overviews, architectures, teasers, and schematics.
 - Use `plot` mode for exact quantitative figures.
+- Use `vectorize` mode to convert AI-generated raster images into editable SVGs for PPT assembly.
 - `--venue` is only valid together with `--cs-paper-figure`.
 - Do not use both `--materials-figure` and `--cs-paper-figure` together.
+- `vectorize` mode is local-only and does not require API credentials.
 
 ## Recommended Next Steps
 

@@ -47,7 +47,7 @@ python3 scripts/plot_publication_figure.py spec.json
 ## Maintenance Notes
 
 - This repo was initialized from `/Users/kiren/.claude/skills/nanobanana-image-generation`.
-- The `.claude` copy is still the live installed copy unless you sync this repo back manually.
+- Both `/Users/kiren/.claude/skills/nanobanana-image-generation` and `/Users/kiren/.agents/skills/nanobanana-image-generation` are now symlinks to this repo.
 - Keep `image` mode conceptual and route exact numeric figures to `plot` mode.
 
 ## Quick Validation

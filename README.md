@@ -1,58 +1,66 @@
 # Nanobanana Paper Figure Skill
 
-Standalone maintenance repo for the `nanobanana-image-generation` skill.
+A Claude Code skill for generating publication-quality figures using Google Gemini's image generation API.
 
-This snapshot includes:
+## Features
 
-- Gemini-compatible `image` generation and editing helpers
-- exact `plot` rendering for publication figures
-- materials-science prompt shortcuts
-- CS paper figure prompt shortcuts for venues such as `NeurIPS`, `ICML`, `ICLR`, `CVPR`, `ICCV`, `ECCV`, `ACL`, `EMNLP`, and `SIGGRAPH`
+- **Image mode** — Generate conceptual figures, method overviews, architecture diagrams, teasers, and schematics via Gemini API
+- **Plot mode** — Render exact publication-style bar charts, trend curves, heatmaps, scatter plots, and multi-panel figures from numeric data
+- **Reference image support** — Pass one or more `--input-image` for style-matched generation or editing
+- **Venue-aware prompts** — Built-in templates for NeurIPS, ICML, ICLR, CVPR, ICCV, ECCV, ACL, EMNLP, SIGGRAPH
+- **Materials-science shortcuts** — Graphical abstracts, mechanism figures, device architectures, processing workflows
+
+## Quick Start
+
+```bash
+# Set up API credentials
+export NANOBANANA_API_KEY="your-gemini-api-key"
+export NANOBANANA_BASE_URL="https://generativelanguage.googleapis.com"
+
+# Generate a CS paper figure
+python3 scripts/generate_image.py \
+  --cs-paper-figure method-overview \
+  --venue neurips \
+  "Two-stage pipeline: encoder extracts features, decoder produces predictions."
+
+# Generate with reference images
+python3 scripts/generate_image.py \
+  --input-image ref_style.png \
+  "Redraw this diagram in a cleaner academic style"
+
+# Render an exact plot from a JSON spec
+python3 scripts/plot_publication_figure.py spec.json
+
+# Build a prompt locally (no API call)
+python3 scripts/build_cs_paper_figure_prompt.py \
+  --cs-paper-figure architecture --venue cvpr --lang en \
+  "Backbone extracts features, FPN aligns scales, head outputs masks."
+```
 
 ## Layout
 
-- `SKILL.md`: skill entry and operator-facing workflow
-- `scripts/`: Python and Node CLIs
-- `references/`: templates, APIs, and workflow docs
-- `agents/`: skill-side agent config
-
-## Common Commands
-
-Print a CS figure prompt locally:
-
-```bash
-python3 scripts/build_cs_paper_figure_prompt.py \
-  --cs-paper-figure architecture \
-  --venue cvpr \
-  --lang en \
-  "Image input goes through a backbone, multi-scale features are aligned with text, temporal memory stabilizes predictions, and the head outputs segmentation masks."
+```
+SKILL.md              # Skill entry point and workflow
+scripts/              # Python and Node CLIs
+  generate_image.py   # Primary image generation CLI
+  generate_image.js   # Node.js parity CLI
+  plot_publication_figure.py   # Exact plot renderer
+  build_plot_spec.py           # Concise request → full plot spec
+  build_cs_paper_figure_prompt.py       # CS prompt builder
+  build_materials_figure_prompt.py      # Materials-science prompt builder
+references/           # Templates, APIs, and workflow docs
+agents/               # Skill-side agent config
 ```
 
-Print the final prompt through the main image CLI:
+## Branches
 
-```bash
-python3 scripts/generate_image.py \
-  --print-prompt \
-  --cs-paper-figure method-overview \
-  --venue neurips \
-  "Video frames are encoded, memory retrieves relevant history, and the decoder produces temporally consistent predictions."
-```
+- `main` — Core image generation and plotting (stable)
+- `dev` — Experimental features including raster-to-SVG vectorization pipeline
 
-Render an exact plot:
+## Attribution
 
-```bash
-python3 scripts/plot_publication_figure.py spec.json
-```
+This project is based on and continues development from [siyuliu/nanobanana-image-generation](https://github.com/siyuliu/nanobanana-image-generation), the original Nanobanana image generation skill for Claude Code.
 
-## Maintenance Notes
+## License
 
-- This repo was initialized from `/Users/kiren/.claude/skills/nanobanana-image-generation`.
-- Both `/Users/kiren/.claude/skills/nanobanana-image-generation` and `/Users/kiren/.agents/skills/nanobanana-image-generation` are now symlinks to this repo.
-- Keep `image` mode conceptual and route exact numeric figures to `plot` mode.
-
-## Quick Validation
-
-```bash
-python3 -m py_compile scripts/*.py
-node --check scripts/generate_image.js
-```
+MIT
